@@ -37,7 +37,21 @@ empresas = {
     "ABEV3": "ABEV3.SA"
 }
 
+
 def get_dividend_yield_fundamentus(ticker):
+    try:
+        url = f"https://www.fundamentus.com.br/detalhes.php?papel={ticker}"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        page = requests.get(url, headers=headers)
+        soup = BeautifulSoup(page.content, "html.parser")
+        td_list = soup.find_all("td")
+        for i, td in enumerate(td_list):
+            if "Div. Yield" in td.text:
+                valor = td_list[i+1].text.strip().replace("%", "").replace(",", ".")
+                return float(valor)
+    except Exception as e:
+        return None
+
     try:
         url = f"https://www.fundamentus.com.br/detalhes.php?papel={ticker}"
         headers = {"User-Agent": "Mozilla/5.0"}
